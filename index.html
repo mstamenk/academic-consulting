@@ -104,7 +104,7 @@
         <div class="cta">
           <a class="btn primary" href="mailto:stamenkovic.academic.consulting@gmail.com" aria-label="Request a review">Request a review</a>
           <a class="btn" href="#process">How the process works</a>
-          <a class="btn" href="CV_MarkoStamenkovic.pdf" target="_blank" rel="noopener">Download CV</a>
+          <a class="btn" href="CV_MarkoStamenkovic.pdf" target="_blank" rel="noopener">Academic CV</a>
         </div>
       </div>
     </section>
@@ -112,6 +112,7 @@
     <section id="services">
       <h2>Services &amp; Pricing</h2>
       <p class="subtitle">I offer strategic feedback on academic applications and proposals, with a focus on scientific narrative, reviewer-facing clarity, feasibility, ambition, CV positioning, and institutional fit. The goal is not to rewrite your work, but to help you make the strongest possible version of your own application.</p>
+      <p class="note">I am especially well positioned to support applications in physics, STEM, large-scale scientific collaborations, detector/R&amp;D, machine learning, and interdisciplinary technical research. I can also provide structure- and narrative-focused feedback for broader academic applications.</p>
       <p class="note">Perspective informed by ERC Starting Grant Step 2 selection / A ranking and MSCA evaluation experience.</p>
 
       <div class="grid cols-2">
@@ -134,10 +135,10 @@
           <h3>Grant Diagnostic Review</h3>
           <p class="service-price">€500</p>
           <p class="kicker">For ERC, MSCA, SNF, and related grants</p>
-          <p>A full strategic review of one advanced grant draft. I focus on how the proposal is likely to be read by expert evaluators: the central idea, ambition, feasibility, risks, work plan, independence, and reviewer-facing clarity.</p>
+          <p>A full strategic review round of one advanced grant draft. I focus on how the proposal is likely to be read by expert evaluators: the central idea, ambition, feasibility, risks, work plan, independence, and reviewer-facing clarity.</p>
           <p class="service-includes-title">Includes:</p>
           <ul class="service-includes">
-            <li>One full draft review</li>
+            <li>One review round of one advanced draft</li>
             <li>Strategic written comments</li>
             <li>Reviewer-style feedback on strengths, weaknesses, and risks</li>
             <li>Feedback on scientific narrative and proposal structure</li>
@@ -194,7 +195,7 @@
       <aside id="contact">
         <h2>Contact</h2>
         <p>Email: <a href="mailto:stamenkovic.academic.consulting@gmail.com">stamenkovic.academic.consulting@gmail.com</a></p>
-        <p>Academic Experience: ERC second round, MSCA reviewer, LPC DR Awards, SNF PhD Mobility grant</p>
+        <p>Relevant experience: ERC Starting Grant Step 2 selection / A ranking, MSCA evaluation experience, SNF Mobility funding, LPC Distinguished Researcher Awards, and selection for a permanent research position.</p>
         <p>Profiles: <a href="https://inspirehep.net/authors/1623795" target="_blank" rel="noopener">InspireHEP</a> · <a href="https://github.com/mstamenk" target="_blank" rel="noopener">GitHub</a> · <a href="https://x.com/stamenkm" target="_blank" rel="noopener">X/Twitter</a></p>
       </aside>
     </section>
@@ -221,10 +222,29 @@
 
   <script>
     document.getElementById('yr').textContent = new Date().getFullYear();
-    const d = new Date(document.lastModified);
+    const updatedEl = document.getElementById('updated');
     const opts = {year:'numeric',month:'long',day:'numeric'};
-    const safeDate = Number.isNaN(d.getTime()) ? new Date() : d;
-    document.getElementById('updated').textContent = safeDate.toLocaleDateString(undefined,opts);
+
+    const fallbackDate = () => {
+      const d = new Date(document.lastModified);
+      const safeDate = Number.isNaN(d.getTime()) ? new Date() : d;
+      updatedEl.textContent = safeDate.toLocaleDateString(undefined, opts);
+    };
+
+    const setLastPushDate = async () => {
+      try {
+        const res = await fetch("https://api.github.com/repos/mstamenk/academic-consulting/commits?per_page=1");
+        if (!res.ok) throw new Error("GitHub API request failed");
+        const commits = await res.json();
+        const pushDate = commits?.[0]?.commit?.committer?.date;
+        if (!pushDate) throw new Error("No commit date found");
+        updatedEl.textContent = new Date(pushDate).toLocaleDateString(undefined, opts);
+      } catch (_err) {
+        fallbackDate();
+      }
+    };
+
+    setLastPushDate();
   </script>
 </body>
 </html>
